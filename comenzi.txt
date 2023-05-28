@@ -1,0 +1,8 @@
+sudo apt-get install libxml2-dev libxmlsec1-dev libffi-dev
+sudo pip3 install cryptography
+sudo pip install freeopcua
+
+pip install Adafruit-DHT
+
+-------tutorial led on/off
+https://www.youtube.com/watch?v=vwcAngFFj9g&ab_channel=RoboticsBack-End
