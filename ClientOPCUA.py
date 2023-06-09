@@ -14,6 +14,7 @@ prev_hum_state = None
 prev_temp_state = None
 prev_flame_state = None
 prev_sound_state = None
+prev_switch_state = None
 
 url = "opc.tcp://169.254.15.16:4840"
 
@@ -50,24 +51,36 @@ def insert_sound_value(name, value):
     insert_query_flame = f"INSERT INTO Table_Sound (Nume, Valoare, Data) VALUES ('{name}', '{value}', '{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}')"
     cursor.execute(insert_query_flame)
 
+def insert_switch_value(name, value):
+    insert_query_flame = f"INSERT INTO Table_Switch (Nume, Valoare, Data) VALUES ('{name}', '{value}', '{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}')"
+    cursor.execute(insert_query_flame)
+
+def insert_hum_value(name, value):
+    insert_query_flame = f"INSERT INTO Table_Hum (Nume, Valoare, Data) VALUES ('{name}', '{value}', '{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}')"
+    cursor.execute(insert_query_flame)
+
+def insert_temp_value(name, value):
+    insert_query_flame = f"INSERT INTO Table_Temp (Nume, Valoare, Data) VALUES ('{name}', '{value}', '{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}')"
+    cursor.execute(insert_query_flame)
+
 while True:
-    led1 = client.get_node("ns=2;i=5")
+    led1 = client.get_node("ns=2;i=6")
     Led1 = led1.get_value()
     print(Led1)
 
-    led2 = client.get_node("ns=2;i=6")
+    led2 = client.get_node("ns=2;i=7")
     Led2 = led2.get_value()
     print(Led2)
 
-    led3 = client.get_node("ns=2;i=7")
+    led3 = client.get_node("ns=2;i=8")
     Led3 = led3.get_value()
     print(Led3)
 
-    led5 = client.get_node("ns=2;i=8")
+    led5 = client.get_node("ns=2;i=9")
     Led5 = led5.get_value()
     print(Led5)
 
-    led6 = client.get_node("ns=2;i=9")
+    led6 = client.get_node("ns=2;i=10")
     Led6 = led6.get_value()
     print(Led6)
 
@@ -107,7 +120,7 @@ while True:
         insert_led_state(5, 'LED6', led6_state)
 
 
-    hum = client.get_node("ns=2;i=10")
+    hum = client.get_node("ns=2;i=12")
     Hum6 = hum.get_value()
     print(Hum6)
 
@@ -116,13 +129,13 @@ while True:
     print(Temp)
 
     if Hum6 != prev_hum_state:
-        insert_dht11_values(1, 'Umiditate', Hum6)
+        insert_hum_value('Umiditate', Hum6)
 
     if Temp != prev_temp_state:
-        insert_dht11_values(2, 'Temperatura', Temp)
+        insert_temp_value('Temperatura', Temp)
 
 
-    flame = client.get_node("ns=2;i=12")
+    flame = client.get_node("ns=2;i=13")
     Flame = flame.get_value()
     print(Flame)
 
@@ -136,8 +149,22 @@ while True:
     if Flame != prev_flame_state:
         insert_flame_value('Flame', Flame_state)
 
+    switch = client.get_node("ns=2;i=15")
+    Switch = switch.get_value()
+    print(Switch)
+
+    if Switch == 1:
+        Switch_state = 'Press button'
+        print(Switch_state)
+    else:
+        Switch_state = 'Unpress button'
+        print(Switch_state)
+
+    if Switch != prev_switch_state:
+        insert_switch_value('Switch', Switch_state)
+
      #////////////
-    sound = client.get_node("ns=2;i=13")
+    sound = client.get_node("ns=2;i=14")
     Sound = sound.get_value()
     print(Sound)
 
@@ -145,7 +172,7 @@ while True:
         Sound_state = 'Detectat'
         print(Sound_state)
     else:
-        #Sound_state = 'Nedetectat'
+        Sound_state = 'Nedetectat'
         print(Sound_state)
 
     if Sound != prev_sound_state:
@@ -162,9 +189,11 @@ while True:
     prev_temp_state = Temp
     prev_flame_state = Flame
     prev_sound_state = Sound
+    prev_switch_state = Switch
 
-    time.sleep(2)
     conn.commit()
+    time.sleep(2)
+
 
 # Închiderea conexiunii cu baza de date
 cursor.close()
