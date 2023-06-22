@@ -72,21 +72,6 @@ GPIO.setup(SWITCH_PIN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 server.start()
 
-# Inițializați camera
-camera = cv2.VideoCapture(0)
-
-if not camera.isOpened():
-    print("Nu s-a putut deschide camera.")
-    exit()
-
-# Inițializați obiectul VideoWriter pentru a înregistra video
-fourcc = cv2.VideoWriter_fourcc(*'XVID')  # Codec-ul pentru înregistrarea video
-out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640, 480))
-
-# Inițializați detectorul de față Haar Cascade
-face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-
-
 	
 def handle_sound_wrapper(channel):
     handle_sound(channel, SOUND_PIN, SoundValue)		
@@ -95,7 +80,7 @@ def handle_sound_wrapper(channel):
 GPIO.add_event_detect(SOUND_PIN, GPIO.BOTH, callback= handle_sound_wrapper)
 
 def handle_switch_wrapper(channel):
-    handle_switch(channel, SWITCH_PIN, SwitchValue, camera, camera_variable, face_cascade, out)		            
+    handle_switch(channel, SWITCH_PIN, SwitchValue, camera_variable)		            
 
 # Adăugare eveniment pentru detectarea modificărilor pe pinul de comutare
 GPIO.add_event_detect(SWITCH_PIN, GPIO.BOTH, callback=handle_switch_wrapper)
